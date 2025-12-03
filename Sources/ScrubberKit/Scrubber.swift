@@ -182,6 +182,12 @@ public class Scrubber {
         guard !isCancelled else { return }
         guard progress.engineStatus.count == progress.engineStatusCompletedCount else { return }
 
+        // If every engine finished but nothing was fetched, stop immediately to avoid long waits
+        if progress.fetchedStatus.isEmpty {
+            cancel()
+            return
+        }
+
         if let limitation {
             if documents.count >= limitation {
                 cancel()
